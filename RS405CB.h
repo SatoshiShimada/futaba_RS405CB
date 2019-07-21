@@ -58,6 +58,9 @@ public:
 	int setAngle(const int, double);
 
 	/*
+	 * set target angle to multi servo
+	 * return: written length. if error, return -1
+	 * argument: a std::vector consisting of servo id and target angle.
 	 */
 	int setAngles(std::vector<std::pair<int, double>>);
 
