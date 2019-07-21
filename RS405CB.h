@@ -1,7 +1,8 @@
-
 #ifndef RS405CB_H
 #define RS405CB_H
 
+#include <vector>
+#include <utility>
 #include "serial_port.h"
 
 class RS405CB
@@ -57,6 +58,10 @@ public:
 	int setAngle(const int, double);
 
 	/*
+	 */
+	int setAngles(std::vector<std::pair<int, double>>);
+
+	/*
 	 * set moving time
 	 * return: written length. if error, return -1
 	 * arguments: servo id and moving time
@@ -97,6 +102,7 @@ private:
 	int sendShortPacket(const int, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
 	int sendAndReceiveShortPacket(const int, std::vector<unsigned char> &, unsigned char, unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
 	int sendAndReceiveShortPacket(const int, std::vector<unsigned char> &, unsigned char, unsigned char, unsigned char, unsigned char);
+	int sendLongPacket(unsigned char, unsigned char, unsigned char, std::vector<unsigned char>);
 	int receivePacket(std::vector<unsigned char> &);
 };
 

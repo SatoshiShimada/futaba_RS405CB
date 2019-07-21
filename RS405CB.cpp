@@ -65,6 +65,32 @@ int RS405CB::sendShortPacket(const int id, unsigned char flag, unsigned char add
 	return write_len;
 }
 
+int RS405CB::sendLongPacket(unsigned char address, unsigned char length, unsigned char count, std::vector<unsigned char> data)
+{
+	std::vector<unsigned char> buf;
+
+	buf.push_back(0xFA); // header
+	buf.push_back(0xAF); // header
+	buf.push_back(0x00); // id
+	buf.push_back(0x00); // flags
+	buf.push_back(address);
+	buf.push_back(length);
+	buf.push_back(count);
+
+	for(auto d : data) {
+		buf.push_back(d);
+	}
+
+	unsigned char check_sum = buf[2];
+	for(int i = 3; i < buf.size(); i++) {
+		check_sum = check_sum ^ buf[i];
+	}
+	buf.push_back(check_sum);
+
+	const int write_len = port.writeData(buf);
+	return write_len;
+}
+
 int RS405CB::receivePacket(std::vector<unsigned char> &data)
 {
 	data.clear();
@@ -161,6 +187,25 @@ int RS405CB::setAngle(const int id, double angle)
 	data.push_back(angle_int >> 8);
 	data.push_back(angle_int & 0xff);
 	return sendShortPacket(id, 0x00, 0x1e, 0x02, 0x01, data);
+}
+
+int RS405CB::setAngles(std::vector<std::pair<int, double>> angles)
+{
+	std::vector<unsigned char> data;
+
+	for(auto id_and_angle : angles) {
+		const unsigned char id = id_and_angle.first;
+		double angle = id_and_angle.second;
+		angle = std::max<double>(angle, -150.0);
+		angle = std::min<double>(angle, 150.0);
+		angle *= 10.0;
+		short angle_int = static_cast<signed short>(angle);
+		data.push_back(id);
+		data.push_back(angle_int >> 8);
+		data.push_back(angle_int & 0xff);
+	}
+	const unsigned char length = 3;
+	return sendLongPacket(0x1e, length, angles.size(), data);
 }
 
 int RS405CB::setMovingTime(const int id, double time)
