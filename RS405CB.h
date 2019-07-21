@@ -33,7 +33,7 @@ public:
 
 	/*
 	 * set motor torque
-	 * return: 0 (always return zero)
+	 * return: written length. if error, return -1
 	 * arguments: servo id and torque setting
 	 *   true: torque on
 	 *   false: torque off
@@ -49,7 +49,7 @@ public:
 
 	/*
 	 * set target angle
-	 * return: 0
+	 * return: written length. if error, return -1
 	 * arguments: servo id and target angle
 	 *   valid angle range is -150 <= angle <= 150.
 	 *   unit is degree.
@@ -58,7 +58,7 @@ public:
 
 	/*
 	 * set moving time
-	 * return: 0
+	 * return: written length. if error, return -1
 	 * arguments: servo id and moving time
 	 *   unit is second [s]
 	 *   moving time is zero means use max velocity.
@@ -67,28 +67,27 @@ public:
 
 	/*
 	 * set angle and moving time
-	 * return: 0
+	 * return: written length. if error, return -1
 	 * arguments: servo id, target angle and moving time
 	 */
 	int setAngleAndMovingTime(const int, double, double);
 
 	/*
 	 * store memory map to flash ROM. need to wait 1 second for writing time.
-	 * return: 0
+	 * return: written length. if error, return -1
 	 * argument: servo id
 	 */
 	int storeDataToROM(const int);
 
 	/*
 	 * reboot servo motor.
-	 * return: 0
+	 * return: written length. if error, return -1
 	 * argument: servo id
 	 */
 	int reboot(const int);
 
 	/*
-	 * reset memory map to factory setting.
-	 * return: 0
+	 * return: written length. if error, return -1
 	 * argument: servo id
 	 */
 	int resetMemoryMap(const int);

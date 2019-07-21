@@ -22,8 +22,8 @@ int RS405CB::sendAndReceiveShortPacket(const int id, std::vector<unsigned char> 
 {
 	const int ret = sendShortPacket(id, flag, address, length, count, data);
 	if(ret > 0) {
-		receivePacket(recv_data);
-		return 0;
+		if(receivePacket(recv_data) == 0)
+			return 0;
 	}
 
 	return 1;
@@ -94,15 +94,17 @@ int RS405CB::receivePacket(std::vector<unsigned char> &data)
 		for(int i = 0; i < data_length; i++) {
 			data.push_back(recv_buf[7 + i]);
 		}
+		return 0;
+	} else {
+		return 3;
 	}
-	return 0;
 }
 
 double RS405CB::getVoltage(const int id)
 {
 	std::vector<unsigned char> recv_data;
 	// get number from 42 to 59 of memory map
-	sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	const int result = sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
 
 	const double voltage = ((recv_data[11] << 8) | recv_data[10]) / 100.0;
 	return voltage;
@@ -116,6 +118,16 @@ int RS405CB::getTemperature(const int id)
 
 	const int temperature = (recv_data[9] << 8) | recv_data[8];
 	return temperature;
+}
+
+int RS405CB::getLoad(const int id)
+{
+	std::vector<unsigned char> recv_data;
+	// get number from 42 to 59 of memory map
+	sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+
+	const int load = (recv_data[7] << 8) | recv_data[6];
+	return load;
 }
 
 double RS405CB::getAngle(const int id)
@@ -136,8 +148,7 @@ int RS405CB::setTorque(const int id, bool torque_on)
 	} else {
 		data.push_back(0x00);
 	}
-	sendShortPacket(id, 0x00, 0x24, 0x01, 0x01, data);
-	return 0;
+	return sendShortPacket(id, 0x00, 0x24, 0x01, 0x01, data);
 }
 
 int RS405CB::setAngle(const int id, double angle)
@@ -149,9 +160,7 @@ int RS405CB::setAngle(const int id, double angle)
 	short angle_int = static_cast<signed short>(angle);
 	data.push_back(angle_int >> 8);
 	data.push_back(angle_int & 0xff);
-	sendShortPacket(id, 0x00, 0x1e, 0x02, 0x01, data);
-
-	return 0;
+	return sendShortPacket(id, 0x00, 0x1e, 0x02, 0x01, data);
 }
 
 int RS405CB::setMovingTime(const int id, double time)
@@ -161,9 +170,7 @@ int RS405CB::setMovingTime(const int id, double time)
 	unsigned short time_int = static_cast<unsigned short>(time);
 	data.push_back(time_int >> 8);
 	data.push_back(time_int & 0xff);
-	sendShortPacket(id, 0x00, 0x20, 0x02, 0x01, data);
-
-	return 0;
+	return sendShortPacket(id, 0x00, 0x20, 0x02, 0x01, data);
 }
 
 int RS405CB::setAngleAndMovingTime(const int id, double angle, double time)
@@ -202,15 +209,5 @@ int RS405CB::resetMemoryMap(const int id)
 {
 	// reset memory map to factory setting
 	return sendShortPacket(id, 0x10, 0xff, 0xff, 0x00);
-}
-
-int RS405CB::getLoad(const int id)
-{
-	std::vector<unsigned char> recv_data;
-	// get number from 42 to 59 of memory map
-	sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
-
-	const int load = (recv_data[7] << 8) | recv_data[6];
-	return load;
 }
 
