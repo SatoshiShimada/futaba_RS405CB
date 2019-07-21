@@ -12,18 +12,20 @@ int main(int argc, char *argv[])
 		id = atoi(argv[1]);
 	RS405CB servo("/dev/ttyUSB0");
 	double voltage = servo.getVoltage(id);
-	std::cout << voltage << std::endl; 
+	std::cout << "voltage: " << voltage << std::endl;
 	int temperature = servo.getTemperature(id);
-	std::cout << temperature << std::endl;
+	std::cout << "temperature: " << temperature << std::endl;
 	double angle = servo.getAngle(id);
-	std::cout << angle << std::endl;
-	servo.setTorque(id, true);
+	std::cout << "angle: " << angle << std::endl;
+	servo.setTorque(id, true); // torque on
 
 	//servo.setAngle(id, 0.0);
 	for(int i = -14; i < 15; i++) {
 		servo.setAngle(id, i * 0.1);
 		sleep(1);
 	}
+	double angle = servo.getAngle(id);
+	std::cout << "angle: " << angle << std::endl;
 
 	return 0;
 }

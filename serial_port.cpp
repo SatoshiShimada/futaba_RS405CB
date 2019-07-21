@@ -4,7 +4,6 @@
 
 SerialPort::SerialPort(const char *device_name) : opened(false)
 {
-	//fd = open("/dev/ttyUSB0", O_RDWR);
 	fd = open(device_name, O_RDWR);
 	if(fd < 0) {
 		std::cerr << "serial port open error. device name: " << device_name << std::endl;
@@ -39,14 +38,21 @@ SerialPort::~SerialPort()
 
 int SerialPort::writeData(std::vector<unsigned char> data)
 {
-	return write(fd, data.data(), data.size());
+	if(opened)
+		return write(fd, data.data(), data.size());
+	else
+		return -1;
 }
 
 int SerialPort::readData(std::vector<unsigned char> &data)
 {
-	unsigned char buf[1024];
-	const int ret = read(fd, buf, sizeof(buf));
-	data = std::vector<unsigned char>(buf, buf + ret);
-	return ret;
+	if(opened) {
+		unsigned char buf[1024];
+		const int ret = read(fd, buf, sizeof(buf));
+		data = std::vector<unsigned char>(buf, buf + ret);
+		return ret;
+	} else {
+		return -1;
+	}
 }
 
