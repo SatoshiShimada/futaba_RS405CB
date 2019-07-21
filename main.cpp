@@ -1,0 +1,30 @@
+
+#include <iostream>
+#include "RS405CB.h"
+#include <stdlib.h>
+
+#include <unistd.h>
+
+int main(int argc, char *argv[])
+{
+	int id = 0;
+	if(argc == 2)
+		id = atoi(argv[1]);
+	RS405CB servo("/dev/ttyUSB0");
+	double voltage = servo.getVoltage(id);
+	std::cout << voltage << std::endl; 
+	int temperature = servo.getTemperature(id);
+	std::cout << temperature << std::endl;
+	double angle = servo.getAngle(id);
+	std::cout << angle << std::endl;
+	servo.setTorque(id, true);
+
+	//servo.setAngle(id, 0.0);
+	for(int i = -14; i < 15; i++) {
+		servo.setAngle(id, i * 0.1);
+		sleep(1);
+	}
+
+	return 0;
+}
+
