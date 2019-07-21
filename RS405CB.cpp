@@ -256,3 +256,32 @@ int RS405CB::resetMemoryMap(const int id)
 	return sendShortPacket(id, 0x10, 0xff, 0xff, 0x00);
 }
 
+int RS405CB::setServoID(const int current_id, const int new_id)
+{
+	std::vector<unsigned char> data;
+
+	data.push_back(static_cast<unsigned char>(new_id));
+
+	return sendShortPacket(current_id, 0x00, 0x04, 0x01, 0x01, data);
+}
+
+int RS405CB::setReverseMode(const int id, const bool reverse)
+{
+	std::vector<unsigned char> data;
+
+	if(reverse) {
+		data.push_back(0x01);
+	} else {
+		data.push_back(0x00);
+	}
+
+	return sendShortPacket(id, 0x00, 0x04, 0x01, 0x01, data);
+}
+
+int RS405CB::setBaudrate(const int id, const RS405CB_BAUDRATE baudrate)
+{
+	std::vector<unsigned char> data(baudrate);
+
+	return sendShortPacket(id, 0x00, 0x06, 0x01, 0x01, data);
+}
+

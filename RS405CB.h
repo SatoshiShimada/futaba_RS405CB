@@ -5,6 +5,21 @@
 #include <utility>
 #include "serial_port.h"
 
+enum RS405CB_BAUDRATE
+{
+	BAUDRATE_9600 = 0x00,
+	BAUDRATE_14400 = 0x01,
+	BAUDRATE_19200 = 0x02,
+	BAUDRATE_28800 = 0x03,
+	BAUDRATE_38400 = 0x04,
+	BAUDRATE_54600 = 0x05,
+	BAUDRATE_76800 = 0x06,
+	BAUDRATE_115200 = 0x07,
+	BAUDRATE_153600 = 0x08,
+	BAUDRATE_230400 = 0x09,
+	BAUDRATE_460800 = 0x0A,
+};
+
 class RS405CB
 {
 public:
@@ -99,6 +114,32 @@ public:
 	 * argument: servo id
 	 */
 	int resetMemoryMap(const int);
+
+	/*
+	 * set new ID
+	 * return: written length, if error, return -1
+	 * arguments: current servo ID and new servo ID
+	 */
+	int setServoID(const int, const int);
+
+	/*
+	 * set rotate direction
+	 * return: written length, if error, return -1
+	 * arguments: servo ID and direction
+	 *   true: reverse mode
+	 *   false: no reverse mode
+	 */
+	int setReverseMode(const int, const bool);
+
+	/*
+	 * set baudrate for serial communication
+	 * return: written length, if error, return -1
+	 * arguments: servo ID and baudrate
+	 *   able to use baudrate are: 9600, 14400, 19200, 28800, 38400, 57600, 76800, 115200, 230400, 460800.
+	 *   set baudrate by enum RS405CB_BAUDRATE.
+	 *   need to reboot after change baudrate
+	 */
+	int setBaudrate(const int, const RS405CB_BAUDRATE);
 private:
 	SerialPort port;
 	int sendShortPacket(const int, unsigned char, unsigned char, unsigned char, unsigned char);
