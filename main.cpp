@@ -15,8 +15,7 @@ int main(int argc, char *argv[])
 	std::cout << "voltage: " << voltage << std::endl;
 	int temperature = servo.getTemperature(id);
 	std::cout << "temperature: " << temperature << std::endl;
-	double angle = servo.getAngle(id);
-	std::cout << "angle: " << angle << std::endl;
+	std::cout << "angle: " << servo.getAngle(id) << std::endl;
 	servo.setTorque(id, true); // torque on
 
 	//servo.setAngle(id, 0.0);
@@ -24,8 +23,7 @@ int main(int argc, char *argv[])
 		servo.setAngle(id, i * 0.1);
 		sleep(1);
 	}
-	double angle = servo.getAngle(id);
-	std::cout << "angle: " << angle << std::endl;
+	std::cout << "angle: " << servo.getAngle(id) << std::endl;
 
 	return 0;
 }

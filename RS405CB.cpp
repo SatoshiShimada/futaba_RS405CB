@@ -67,10 +67,29 @@ int RS405CB::sendShortPacket(const int id, unsigned char flag, unsigned char add
 
 int RS405CB::receivePacket(std::vector<unsigned char> &data)
 {
+	data.clear();
 	std::vector<unsigned char> recv_buf;
 	const int len = port.readData(recv_buf);
-	if(len > 0) {
-		data.clear();
+	if(len >= 6) {
+		if(recv_buf[0] != 0xFD || recv_buf[1] != 0xDF) {
+			return 1;
+		}
+		const unsigned char flags = recv_buf[3];
+		if(flags != 0) {
+			if(flags | 0x80) {
+				std::cerr << "error. tempeature limit" << std::endl;
+			}
+			if(flags | 0x20) {
+				std::cerr << "error. tempeature alarm" << std::endl;
+			}
+			if(flags | 0x08) {
+				std::cerr << "error. flash writing error" << std::endl;
+			}
+			if(flags | 0x02) {
+				std::cerr << "error. invalid packet received" << std::endl;
+			}
+			return 2;
+		}
 		int data_length = recv_buf[7];
 		for(int i = 0; i < data_length; i++) {
 			data.push_back(recv_buf[7 + i]);
@@ -131,6 +150,38 @@ int RS405CB::setAngle(const int id, double angle)
 	data.push_back(angle_int >> 8);
 	data.push_back(angle_int & 0xff);
 	sendShortPacket(id, 0x00, 0x1e, 0x02, 0x01, data);
+
+	return 0;
+}
+
+int RS405CB::setMovingTime(const int id, double time)
+{
+	std::vector<unsigned char> data;
+	time *= 100.0;
+	unsigned short time_int = static_cast<unsigned short>(time);
+	data.push_back(time_int >> 8);
+	data.push_back(time_int & 0xff);
+	sendShortPacket(id, 0x00, 0x20, 0x02, 0x01, data);
+
+	return 0;
+}
+
+int RS405CB::setAngleAndMovingTime(const int id, double angle, double time)
+{
+	std::vector<unsigned char> data;
+
+	angle = std::max<double>(angle, -150.0);
+	angle = std::min<double>(angle, 150.0);
+	angle *= 10.0;
+	short angle_int = static_cast<signed short>(angle);
+	data.push_back(angle_int >> 8);
+	data.push_back(angle_int & 0xff);
+
+	time *= 100.0;
+	unsigned short time_int = static_cast<unsigned short>(time);
+	data.push_back(time_int >> 8);
+	data.push_back(time_int & 0xff);
+	sendShortPacket(id, 0x00, 0x1e, 0x04, 0x01, data);
 
 	return 0;
 }
