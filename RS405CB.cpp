@@ -102,16 +102,16 @@ int RS405CB::receivePacket(std::vector<unsigned char> &data)
 		}
 		const unsigned char flags = recv_buf[3];
 		if(flags != 0) {
-			if(flags | 0x80) {
+			if(flags & 0x80) {
 				std::cerr << "error. tempeature limit" << std::endl;
 			}
-			if(flags | 0x20) {
+			if(flags & 0x20) {
 				std::cerr << "error. tempeature alarm" << std::endl;
 			}
-			if(flags | 0x08) {
+			if(flags & 0x08) {
 				std::cerr << "error. flash writing error" << std::endl;
 			}
-			if(flags | 0x02) {
+			if(flags & 0x02) {
 				std::cerr << "error. invalid packet received" << std::endl;
 			}
 			return 2;
