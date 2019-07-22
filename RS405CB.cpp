@@ -1,4 +1,3 @@
-
 #include <unistd.h>
 #include <iostream>
 #include <algorithm>
@@ -184,8 +183,8 @@ int RS405CB::setAngle(const int id, double angle)
 	angle = std::min<double>(angle, 150.0);
 	angle *= 10.0;
 	short angle_int = static_cast<signed short>(angle);
-	data.push_back(angle_int >> 8);
 	data.push_back(angle_int & 0xff);
+	data.push_back(angle_int >> 8);
 	return sendShortPacket(id, 0x00, 0x1e, 0x02, 0x01, data);
 }
 

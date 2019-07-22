@@ -1,16 +1,18 @@
-
 #include <iostream>
-#include "RS405CB.h"
 #include <stdlib.h>
 
 #include <unistd.h>
+
+#include "RS405CB.h"
 
 int main(int argc, char *argv[])
 {
 	int id = 0;
 	if(argc == 2)
 		id = atoi(argv[1]);
+
 	RS405CB servo("/dev/ttyUSB0");
+
 	double voltage = servo.getVoltage(id);
 	std::cout << "voltage: " << voltage << std::endl;
 	int temperature = servo.getTemperature(id);
