@@ -108,7 +108,7 @@ int RS405CB::receivePacket(std::vector<unsigned char> &data)
 				return 2;
 			}
 			if(flags & 0x20) {
-				std::cerr << "error. tempeature alarm" << std::endl;
+				std::cerr << "warning. tempeature alarm" << std::endl;
 			}
 			if(flags & 0x08) {
 				std::cerr << "error. flash writing error" << std::endl;
