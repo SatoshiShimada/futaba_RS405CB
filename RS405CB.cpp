@@ -200,8 +200,8 @@ int RS405CB::setAngles(std::vector<std::pair<int, double>> angles)
 		angle *= 10.0;
 		short angle_int = static_cast<signed short>(angle);
 		data.push_back(id);
-		data.push_back(angle_int >> 8);
 		data.push_back(angle_int & 0xff);
+		data.push_back(angle_int >> 8);
 	}
 	const unsigned char length = 3;
 	return sendLongPacket(0x1e, length, angles.size(), data);
@@ -212,8 +212,8 @@ int RS405CB::setMovingTime(const int id, double time)
 	std::vector<unsigned char> data;
 	time *= 100.0;
 	unsigned short time_int = static_cast<unsigned short>(time);
-	data.push_back(time_int >> 8);
 	data.push_back(time_int & 0xff);
+	data.push_back(time_int >> 8);
 	return sendShortPacket(id, 0x00, 0x20, 0x02, 0x01, data);
 }
 
@@ -225,13 +225,13 @@ int RS405CB::setAngleAndMovingTime(const int id, double angle, double time)
 	angle = std::min<double>(angle, 150.0);
 	angle *= 10.0;
 	short angle_int = static_cast<signed short>(angle);
-	data.push_back(angle_int >> 8);
 	data.push_back(angle_int & 0xff);
+	data.push_back(angle_int >> 8);
 
 	time *= 100.0;
 	unsigned short time_int = static_cast<unsigned short>(time);
-	data.push_back(time_int >> 8);
 	data.push_back(time_int & 0xff);
+	data.push_back(time_int >> 8);
 	sendShortPacket(id, 0x00, 0x1e, 0x04, 0x01, data);
 
 	return 0;
