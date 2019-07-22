@@ -10,11 +10,13 @@ sudo chmod a+rw /dev/ttyUSB0
 ./serial [Servo ID]
 ```
 
+The description for all supported method are in `RS405CB.h`.
+
 ## Reference
 
 - [Futaba RS405CB](http://www.futaba.co.jp/robot/command_type_servos/rs405cb)
 
-## LISENCE
+## License
 
-MIT Lisence
+MIT License
 
