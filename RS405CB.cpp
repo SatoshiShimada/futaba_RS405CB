@@ -36,9 +36,11 @@ int RS405CB::sendShortPacket(const int id, unsigned char flag, unsigned char add
 
 int RS405CB::sendShortPacket(const int id, unsigned char flag, unsigned char address, unsigned char length, unsigned char count, std::vector<unsigned char> data)
 {
-	if(length != data.size()) {
-		std::cerr << "invalid data" << std::endl;
-		return -1;
+	if(length != 0x00 && length != 0xff) {
+		if(length != data.size()) {
+			std::cerr << "invalid data" << std::endl;
+			return -1;
+		}
 	}
 	std::vector<unsigned char> buf;
 
@@ -103,19 +105,21 @@ int RS405CB::receivePacket(std::vector<unsigned char> &data)
 		if(flags != 0) {
 			if(flags & 0x80) {
 				std::cerr << "error. tempeature limit" << std::endl;
+				return 2;
 			}
 			if(flags & 0x20) {
 				std::cerr << "error. tempeature alarm" << std::endl;
 			}
 			if(flags & 0x08) {
 				std::cerr << "error. flash writing error" << std::endl;
+				return 2;
 			}
 			if(flags & 0x02) {
 				std::cerr << "error. invalid packet received" << std::endl;
+				return 2;
 			}
-			return 2;
 		}
-		int data_length = recv_buf[7];
+		int data_length = recv_buf[5];
 		for(int i = 0; i < data_length; i++) {
 			data.push_back(recv_buf[7 + i]);
 		}
@@ -130,6 +134,9 @@ double RS405CB::getVoltage(const int id)
 	std::vector<unsigned char> recv_data;
 	// get number from 42 to 59 of memory map
 	const int result = sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	if(result != 0) {
+		return 0.0;
+	}
 
 	const double voltage = ((recv_data[11] << 8) | recv_data[10]) / 100.0;
 	return voltage;
@@ -139,7 +146,10 @@ int RS405CB::getTemperature(const int id)
 {
 	std::vector<unsigned char> recv_data;
 	// get number from 42 to 59 of memory map
-	sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	const int result = sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	if(result != 0) {
+		return 0.0;
+	}
 
 	const int temperature = (recv_data[9] << 8) | recv_data[8];
 	return temperature;
@@ -149,7 +159,10 @@ int RS405CB::getLoad(const int id)
 {
 	std::vector<unsigned char> recv_data;
 	// get number from 42 to 59 of memory map
-	sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	const int result = sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	if(result != 0) {
+		return 0.0;
+	}
 
 	const int load = (recv_data[7] << 8) | recv_data[6];
 	return load;
@@ -159,7 +172,10 @@ double RS405CB::getAngle(const int id)
 {
 	std::vector<unsigned char> recv_data;
 	// get number from 42 to 59 of memory map
-	sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	const int result = sendAndReceiveShortPacket(id, recv_data, 0x09, 0x00, 0x00, 0x01);
+	if(result != 0) {
+		return 0.0;
+	}
 
 	const double angle = ((recv_data[1] << 8) | recv_data[0]) / 10.0;
 	return angle;
@@ -257,9 +273,7 @@ int RS405CB::resetMemoryMap(const int id)
 
 int RS405CB::setServoID(const int current_id, const int new_id)
 {
-	std::vector<unsigned char> data;
-
-	data.push_back(static_cast<unsigned char>(new_id));
+	std::vector<unsigned char> data(1, static_cast<unsigned char>(new_id));
 
 	return sendShortPacket(current_id, 0x00, 0x04, 0x01, 0x01, data);
 }
@@ -279,7 +293,7 @@ int RS405CB::setReverseMode(const int id, const bool reverse)
 
 int RS405CB::setBaudrate(const int id, const RS405CB_BAUDRATE baudrate)
 {
-	std::vector<unsigned char> data(baudrate);
+	std::vector<unsigned char> data(1, baudrate);
 
 	return sendShortPacket(id, 0x00, 0x06, 0x01, 0x01, data);
 }
