@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
     RS405CB servo("/dev/ttyUSB0");
     constexpr int id = 1;
 
+    servo.setTorque(id, true);
     servo.setAngle(id);
 
     return 0;
