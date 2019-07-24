@@ -1,6 +1,6 @@
 
 CXX=g++
-CXXFLAGS=-Wall
+CXXFLAGS=-Wall -std=c++11
 LIBS=
 
 all: librs405cb.so serial
