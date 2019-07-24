@@ -1,5 +1,7 @@
 # A library for Futaba RS405CB servo motor.
 
+Only supports serial communication. No supports PWM control.
+
 ## Usage
 
 ```shell
@@ -22,7 +24,7 @@ The description of all supported method are in `RS405CB.h`.
 
 int main(int argc, char *argv[])
 {
-    RS405CB servo("/dev/ttyUSB0");
+    RS405CB servo("/dev/ttyUSB0", 115200);
     constexpr int id = 1;
 
     std::cout << "Angle: " << servo.getAngle(id);
@@ -39,7 +41,7 @@ int main(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    RS405CB servo("/dev/ttyUSB0");
+    RS405CB servo("/dev/ttyUSB0", 115200);
     constexpr int id = 1;
 
     servo.setTorque(id, true);
@@ -58,7 +60,7 @@ int main(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    RS405CB servo("/dev/ttyUSB0");
+    RS405CB servo("/dev/ttyUSB0", 115200);
     constexpr int id = 1;
     constexpr int new_id = 2;
 
