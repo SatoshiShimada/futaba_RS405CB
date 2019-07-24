@@ -3,7 +3,7 @@
 #include <algorithm>
 #include "RS405CB.h"
 
-RS405CB::RS405CB(const char *serial_port_device_name) : port(serial_port_device_name)
+RS405CB::RS405CB(const char *serial_port_device_name, const int baudrate) : port(serial_port_device_name, baudrate)
 {
 }
 

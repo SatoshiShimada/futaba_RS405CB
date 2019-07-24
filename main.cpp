@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	if(argc == 2)
 		id = atoi(argv[1]);
 
-	RS405CB servo("/dev/ttyUSB0");
+	RS405CB servo("/dev/ttyUSB0", 115200);
 
 	double voltage = servo.getVoltage(id);
 	std::cout << "voltage: " << voltage << std::endl;

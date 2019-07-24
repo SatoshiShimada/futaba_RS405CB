@@ -14,7 +14,7 @@
 class SerialPort
 {
 public:
-	SerialPort(const char *device_name);
+	SerialPort(const char *device_name, const int baudrate);
 	~SerialPort();
 	int writeData(std::vector<unsigned char>);
 	int readData(std::vector<unsigned char> &);

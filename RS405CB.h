@@ -23,7 +23,7 @@ enum RS405CB_BAUDRATE
 class RS405CB
 {
 public:
-	RS405CB(const char *);
+	RS405CB(const char *, const int);
 	~RS405CB();
 
 	/*
