@@ -52,12 +52,12 @@ int RS405CB::sendShortPacket(const int id, unsigned char flag, unsigned char add
 	buf.push_back(length);
 	buf.push_back(count);
 
-	for(int i = 0; i < data.size(); i++) {
+	for(std::size_t i = 0; i < data.size(); i++) {
 		buf.push_back(data[i]);
 	}
 
 	unsigned char check_sum = buf[2];
-	for(int i = 3; i < buf.size(); i++) {
+	for(std::size_t i = 3; i < buf.size(); i++) {
 		check_sum = check_sum ^ buf[i];
 	}
 	buf.push_back(check_sum);
@@ -83,7 +83,7 @@ int RS405CB::sendLongPacket(unsigned char address, unsigned char length, unsigne
 	}
 
 	unsigned char check_sum = buf[2];
-	for(int i = 3; i < buf.size(); i++) {
+	for(std::size_t i = 3; i < buf.size(); i++) {
 		check_sum = check_sum ^ buf[i];
 	}
 	buf.push_back(check_sum);
