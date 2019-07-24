@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/SatoshiShimada/futaba_RS405CB.svg?branch=master)](https://travis-ci.org/SatoshiShimada/futaba_RS405CB)
+
 # A library for Futaba RS405CB servo motor.
 
 Only supports serial communication. No supports PWM control.
